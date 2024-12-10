@@ -1,0 +1,21 @@
+<!-- hibernate.cfg.xml -->
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/shopdatabase?useSSL=false</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">9196</property>
+        <!--<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>-->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.show_sql">true</property>
+
+        <!-- Добавьте все классы-сущности -->
+        <mapping class="Hibernate.entities.User" />
+        <mapping class="Hibernate.entities.OnVerify" />
+        <mapping class="Hibernate.entities.DBProduct" />
+        <mapping class="Hibernate.entities.TypesOfProduct" />
+        <mapping class="Hibernate.entities.DBWorker" />
+        <mapping class="Hibernate.entities.DBOperation" />
+    </session-factory>
+</hibernate-configuration>
