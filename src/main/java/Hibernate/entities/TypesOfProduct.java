@@ -12,5 +12,21 @@ public class TypesOfProduct {
     @Column(name = "description", length = 128)
     private String description;
 
+    public String getProdType() {
+        return prodType;
+    }
+
+    public void setProdType(String prodType) {
+        this.prodType = prodType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     // Getters и setters
 }

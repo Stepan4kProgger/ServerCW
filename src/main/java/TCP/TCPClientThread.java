@@ -85,92 +85,80 @@ public class TCPClientThread implements Runnable {
                     }
                 }
                 case "manage_products" -> {
-                    try {
-                        out.writeObject(getProducts(statement));
-                        boolean noBackRequest = true;
-                        while (noBackRequest) {
-                            switch (((TransferCode) in.readObject()).getCode()) {
-                                case "refresh" -> out.writeObject(getProducts(statement));
-                                case "add" -> addProduct(statement, client, (Product) in.readObject());
-                                case "remove" -> removeProduct(statement, client, (Product) in.readObject());
-                                case "edit" ->
-                                        editProduct(statement, client, (TransferCode) in.readObject(), (Product) in.readObject(), (Product) in.readObject());
-                                case "prod_types" -> out.writeObject(getTypes(statement));
-                                case "add_type" -> addType(statement, (ProductType) in.readObject());
-                                case "back" -> noBackRequest = false;
-                                case "leave" -> {
-                                    noBackRequest = false;
-                                    proceed = false;
-                                    client = null;
-                                }
+                    out.writeObject(getProducts(session));
+                    boolean noBackRequest = true;
+                    while (noBackRequest) {
+                        switch (((TransferCode) in.readObject()).getCode()) {
+                            case "refresh" -> out.writeObject(getProducts(session));
+                            case "add" -> addProduct(session, client, (Product) in.readObject());
+                            case "remove" -> removeProduct(session, client, (Product) in.readObject());
+                            case "edit" ->
+                                    editProduct(session, client, (TransferCode) in.readObject(), (Product) in.readObject(), (Product) in.readObject());
+                            case "prod_types" -> out.writeObject(getTypes(session));
+                            case "add_type" -> addType(session, (ProductType) in.readObject());
+                            case "back" -> noBackRequest = false;
+                            case "leave" -> {
+                                noBackRequest = false;
+                                proceed = false;
+                                client = null;
                             }
                         }
-                    } catch (SQLException ignored) {
                     }
                 }
                 case "manage_workers" -> {
-                    try {
-                        out.writeObject(getWorkers(session));
-                        boolean noBackRequest = true;
-                        while (noBackRequest) {
-                            switch (((TransferCode) in.readObject()).getCode()) {
-                                case "refresh" -> out.writeObject(getWorkers(session));
-                                case "add" -> addWorker(statement, client, (Worker) in.readObject());
-                                case "remove" -> removeWorker(statement, client, (Worker) in.readObject());
-                                case "edit" ->
-                                        editWorker(statement, client, (TransferCode) in.readObject(), (Worker) in.readObject(), (Worker) in.readObject());
-                                case "get_logins" -> out.writeObject(getClients(statement));
-                                case "back" -> noBackRequest = false;
-                                case "leave" -> {
-                                    noBackRequest = false;
-                                    proceed = false;
-                                    client = null;
-                                }
+                    out.writeObject(getWorkers(session));
+                    boolean noBackRequest = true;
+                    while (noBackRequest) {
+                        switch (((TransferCode) in.readObject()).getCode()) {
+                            case "refresh" -> out.writeObject(getWorkers(session));
+                            case "add" -> addWorker(session, client, (Worker) in.readObject());
+                            case "remove" -> removeWorker(session, client, (Worker) in.readObject());
+                            case "edit" ->
+                                    editWorker(session, client, (TransferCode) in.readObject(), (Worker) in.readObject(), (Worker) in.readObject());
+                            case "get_logins" -> out.writeObject(getClients(session));
+                            case "back" -> noBackRequest = false;
+                            case "leave" -> {
+                                noBackRequest = false;
+                                proceed = false;
+                                client = null;
                             }
                         }
-                    } catch (SQLException ignored) {
                     }
                 }
                 case "manage_users" -> {
-                    try {
-                        out.writeObject(getClients(statement));
-                        boolean noBackRequest = true;
-                        while (noBackRequest) {
-                            switch (((TransferCode) in.readObject()).getCode()) {
-                                case "refresh" -> out.writeObject(getClients(statement));
-                                case "add" -> addClient(statement, client, (Client) in.readObject());
-                                case "remove" -> removeClient(statement, client, (Client) in.readObject());
-                                case "edit" ->
-                                        editClient(statement, client, (TransferCode) in.readObject(), (Client) in.readObject(), (Client) in.readObject());
-                                case "get_workers" -> out.writeObject(getWorkers(session));
-                                case "get_unverified" -> out.writeObject(getUnverified(statement));
-                                case "back" -> noBackRequest = false;
-                                case "leave" -> {
-                                    noBackRequest = false;
-                                    proceed = false;
-                                    client = null;
-                                }
+                    out.writeObject(getClients(session));
+                    boolean noBackRequest = true;
+                    while (noBackRequest) {
+                        switch (((TransferCode) in.readObject()).getCode()) {
+                            case "refresh" -> out.writeObject(getClients(session));
+                            case "add" -> addClient(session, client, (Client) in.readObject());
+                            case "remove" -> removeClient(session, client, (Client) in.readObject());
+                            case "edit" ->
+                                    editClient(session, client, (TransferCode) in.readObject(), (Client) in.readObject(), (Client) in.readObject());
+                            case "get_workers" -> out.writeObject(getWorkers(session));
+                            case "get_unverified" -> out.writeObject(getUnverified(session));
+                            case "back" -> noBackRequest = false;
+                            case "leave" -> {
+                                noBackRequest = false;
+                                proceed = false;
+                                client = null;
                             }
                         }
-                    } catch (SQLException ignored) {
                     }
                 }
                 case "see_all_operations" -> {
-                    try {
-                        out.writeObject(getOperations(statement));
-                        boolean noBackRequest = true;
-                        while (noBackRequest) {
-                            switch (((TransferCode) in.readObject()).getCode()) {
-                                case "refresh" -> out.writeObject(getOperations(statement));
-                                case "back" -> noBackRequest = false;
-                                case "leave" -> {
-                                    noBackRequest = false;
-                                    proceed = false;
-                                    client = null;
-                                }
+                    out.writeObject(getOperations(session));
+                    boolean noBackRequest = true;
+                    while (noBackRequest) {
+                        switch (((TransferCode) in.readObject()).getCode()) {
+                            case "refresh" -> out.writeObject(getOperations(session));
+                            case "back" -> noBackRequest = false;
+                            case "leave" -> {
+                                noBackRequest = false;
+                                proceed = false;
+                                client = null;
                             }
                         }
-                    } catch (SQLException ignored) {
                     }
                 }
             }

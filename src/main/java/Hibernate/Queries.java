@@ -3,6 +3,7 @@ package Hibernate;
 import Hibernate.entities.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import res.common.*;
 
 import java.util.List;
@@ -193,9 +194,9 @@ public class Queries {
             DBOperation dbOperation = new DBOperation();
             dbOperation.setAuthorLogin(client.getLogin());
             dbOperation.setAuthorName(client.getName());
-            dbOperation.setOperationType("Add");
+            dbOperation.setOperationType(OperationType.ДОБАВЛЕНИЕ);
             dbOperation.setTarget(product.getName());
-            dbOperation.setTargetType("Product");
+            dbOperation.setTargetType(TargetType.ТОВАР);
             session.save(dbOperation);
     
             transaction.commit();
@@ -219,9 +220,9 @@ public class Queries {
                 DBOperation dbOperation = new DBOperation();
                 dbOperation.setAuthorLogin(client.getLogin());
                 dbOperation.setAuthorName(client.getName());
-                dbOperation.setOperationType("Delete");
+                dbOperation.setOperationType(OperationType.УДАЛЕНИЕ);
                 dbOperation.setTarget(product.getName());
-                dbOperation.setTargetType("Product");
+                dbOperation.setTargetType(TargetType.ТОВАР);
                 session.save(dbOperation);
             }
     
@@ -280,10 +281,10 @@ public class Queries {
             DBOperation dbOperation = new DBOperation();
             dbOperation.setAuthorLogin(client.getLogin());
             dbOperation.setAuthorName(client.getName());
-            dbOperation.setOperationType("Edit");
+            dbOperation.setOperationType(OperationType.РЕДАКТИРОВАНИЕ);
             dbOperation.setTarget(oldProduct.getName());
             dbOperation.setInformation(whatChanged);
-            dbOperation.setTargetType("Product");
+            dbOperation.setTargetType(TargetType.ТОВАР);
             session.save(dbOperation);
     
             transaction.commit();
@@ -296,11 +297,11 @@ public class Queries {
     public static ProductTypeArrayList getTypes(Session session) {
         try {
             // Выполняем HQL-запрос для получения всех типов продуктов
-            List<DBProductType> dbProductTypes = session.createQuery("FROM DBProductType", DBProductType.class).list();
+            List<TypesOfProduct> dbProductTypes = session.createQuery("FROM TypesOfProduct", TypesOfProduct.class).list();
     
             // Преобразуем DBProductType в ProductType
             ProductTypeArrayList list = new ProductTypeArrayList();
-            for (DBProductType dbProductType : dbProductTypes) {
+            for (TypesOfProduct dbProductType : dbProductTypes) {
                 ProductType type = new ProductType();
                 type.setProdType(dbProductType.getProdType());
                 type.setDescription(dbProductType.getDescription());
@@ -319,7 +320,7 @@ public class Queries {
             transaction = session.beginTransaction();
     
             // Создаём объект сущности DBProductType
-            DBProductType dbProductType = new DBProductType();
+            TypesOfProduct dbProductType = new TypesOfProduct();
             dbProductType.setProdType(type.getProdType());
             dbProductType.setDescription(type.getDescription());
     
@@ -349,9 +350,9 @@ public class Queries {
             DBOperation dbOperation = new DBOperation();
             dbOperation.setAuthorLogin(client.getLogin());
             dbOperation.setAuthorName(client.getName());
-            dbOperation.setTargetType("Worker");
+            dbOperation.setTargetType(TargetType.СОТРУДНИК);
             dbOperation.setTarget(worker.getName());
-            dbOperation.setOperationType("Add");
+            dbOperation.setOperationType(OperationType.ДОБАВЛЕНИЕ);
             session.save(dbOperation);
     
             transaction.commit();
@@ -376,9 +377,9 @@ public class Queries {
                 DBOperation dbOperation = new DBOperation();
                 dbOperation.setAuthorLogin(client.getLogin());
                 dbOperation.setAuthorName(client.getName());
-                dbOperation.setTargetType("Worker");
+                dbOperation.setTargetType(TargetType.СОТРУДНИК);
                 dbOperation.setTarget(worker.getName());
-                dbOperation.setOperationType("Delete");
+                dbOperation.setOperationType(OperationType.УДАЛЕНИЕ);
                 session.save(dbOperation);
             }
     
@@ -426,7 +427,7 @@ public class Queries {
             DBOperation dbOperation = new DBOperation();
             dbOperation.setAuthorLogin(client.getLogin());
             dbOperation.setAuthorName(client.getName());
-            dbOperation.setOperationType("Edit");
+            dbOperation.setOperationType(OperationType.РЕДАКТИРОВАНИЕ);
             dbOperation.setTarget(oldWorker.getName());
             dbOperation.setInformation(whatChanged);
             session.save(dbOperation);
@@ -443,10 +444,10 @@ public class Queries {
     
         try {
             // Получаем всех клиентов из таблицы "users"
-            List<DBClient> dbClients = session.createQuery("FROM DBClient", DBClient.class).list();
+            List<User> dbClients = session.createQuery("FROM User", User.class).list();
     
             // Конвертируем DBClient в Client и добавляем в список
-            for (DBClient dbClient : dbClients) {
+            for (User dbClient : dbClients) {
                 Client client = Factory.makeClient();
                 client.setLogin(dbClient.getLogin());
                 client.setPassword(dbClient.getPassword());
@@ -466,10 +467,10 @@ public class Queries {
     
         try {
             // Получаем всех клиентов из таблицы "on_verify"
-            List<DBOnVerify> dbUnverifiedClients = session.createQuery("FROM DBOnVerify", DBOnVerify.class).list();
+            List<OnVerify> dbUnverifiedClients = session.createQuery("FROM OnVerify", OnVerify.class).list();
     
             // Конвертируем DBOnVerify в Client и добавляем в список
-            for (DBOnVerify dbOnVerify : dbUnverifiedClients) {
+            for (OnVerify dbOnVerify : dbUnverifiedClients) {
                 Client client = Factory.makeClient();
                 client.setLogin(dbOnVerify.getLogin());
                 list.getList().add(client);
@@ -487,7 +488,7 @@ public class Queries {
             transaction = session.beginTransaction();
     
             // Получаем пароль из таблицы on_verify
-            Query<String> query = session.createQuery("SELECT password FROM DBOnVerify WHERE login = :login", String.class);
+            Query<String> query = session.createQuery("SELECT password FROM OnVerify WHERE login = :login", String.class);
             query.setParameter("login", user.getLogin());
             String password = query.uniqueResult();
     
@@ -501,7 +502,7 @@ public class Queries {
             user.setAdmin(0);
     
             // Добавляем пользователя в таблицу users
-            DBClient newClient = new DBClient();
+            User newClient = new User();
             newClient.setLogin(user.getLogin());
             newClient.setPassword(user.getPassword());
             newClient.setName(user.getName());
@@ -509,7 +510,7 @@ public class Queries {
             session.save(newClient);
     
             // Удаляем пользователя из on_verify
-            Query deleteQuery = session.createQuery("DELETE FROM DBOnVerify WHERE login = :login");
+            Query deleteQuery = session.createQuery("DELETE FROM OnVerify WHERE login = :login");
             deleteQuery.setParameter("login", user.getLogin());
             deleteQuery.executeUpdate();
     
@@ -517,7 +518,7 @@ public class Queries {
             DBOperation operation = new DBOperation();
             operation.setAuthorLogin(client.getLogin());
             operation.setAuthorName(client.getName());
-            operation.setTargetType("Client");
+            operation.setTargetType(TargetType.ПОЛЬЗОВАТЕЛЬ);
             operation.setTarget(user.getLogin());
             session.save(operation);
     
@@ -534,7 +535,7 @@ public class Queries {
             transaction = session.beginTransaction();
     
             // Удаляем пользователя из on_verify
-            Query deleteQuery = session.createQuery("DELETE FROM DBOnVerify WHERE login = :login");
+            Query deleteQuery = session.createQuery("DELETE FROM OnVerify WHERE login = :login");
             deleteQuery.setParameter("login", user.getLogin());
             deleteQuery.executeUpdate();
     
@@ -542,8 +543,8 @@ public class Queries {
             DBOperation operation = new DBOperation();
             operation.setAuthorLogin(client.getLogin());
             operation.setAuthorName(client.getName());
-            operation.setOperationType("Delete");
-            operation.setTargetType("Client");
+            operation.setOperationType(OperationType.УДАЛЕНИЕ);
+            operation.setTargetType(TargetType.ПОЛЬЗОВАТЕЛЬ);
             operation.setTarget(user.getLogin());
             session.save(operation);
     
@@ -560,9 +561,9 @@ public class Queries {
             transaction = session.beginTransaction();
     
             // Получаем клиента из базы данных
-            Query<DBClient> query = session.createQuery("FROM DBClient WHERE login = :login", DBClient.class);
+            Query<User> query = session.createQuery("FROM User WHERE login = :login", User.class);
             query.setParameter("login", oldUser.getLogin());
-            DBClient dbClient = query.uniqueResult();
+            User dbClient = query.uniqueResult();
     
             if (dbClient == null) {
                 System.out.println("User not found!");
@@ -591,7 +592,7 @@ public class Queries {
             DBOperation operation = new DBOperation();
             operation.setAuthorLogin(client.getLogin());
             operation.setAuthorName(client.getName());
-            operation.setOperationType("Edit");
+            operation.setOperationType(OperationType.РЕДАКТИРОВАНИЕ);
             operation.setTarget(newUser.getLogin());
             operation.setInformation(whatChanged);
             session.save(operation);

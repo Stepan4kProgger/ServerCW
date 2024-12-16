@@ -61,8 +61,8 @@ public class DBOperation {
         this.operationType = operationType;
     }
 
-    public TargetType getTargetType() {
-        return targetType;
+    public String getTargetType() {
+        return String.valueOf(targetType);
     }
 
     public void setTargetType(TargetType targetType) {
